@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.0.0
+MinimumVisualStudioVersion = 17.8.0.0
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspireAzStorage.AppHost", "AspireAzStorage.AppHost\AspireAzStorage.AppHost.csproj", "{F065902E-1FB9-493A-91CA-F420ECFFB4CF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspireAzStorage.ServiceDefaults", "AspireAzStorage.ServiceDefaults\AspireAzStorage.ServiceDefaults.csproj", "{A6B26A1D-C24F-4375-B47B-B62B704646D6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F065902E-1FB9-493A-91CA-F420ECFFB4CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F065902E-1FB9-493A-91CA-F420ECFFB4CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F065902E-1FB9-493A-91CA-F420ECFFB4CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F065902E-1FB9-493A-91CA-F420ECFFB4CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6B26A1D-C24F-4375-B47B-B62B704646D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6B26A1D-C24F-4375-B47B-B62B704646D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6B26A1D-C24F-4375-B47B-B62B704646D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6B26A1D-C24F-4375-B47B-B62B704646D6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2A6B699D-7C55-45CA-AE67-153319EE2A84}
+	EndGlobalSection
+EndGlobal
