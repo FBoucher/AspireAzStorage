@@ -1,6 +1,28 @@
 @Api_HostAddress = http://localhost:5258
 
-GET {{Api_HostAddress}}/weatherforecast/
+
+### Generates many employees
+GET {{Api_HostAddress}}/generate
 Accept: application/json
 
-###
+
+
+### Get all employees
+GET {{Api_HostAddress}}/employees
+Accept: application/json
+
+
+###	Get all employees with async
+GET {{Api_HostAddress}}/employeesaync
+Accept: application/json
+
+
+### Get all employees with the last name starting with B
+GET {{Api_HostAddress}}/employees/B
+Accept: application/json
+
+
+### Get all employees async with the last name starting with B
+GET {{Api_HostAddress}}/employeesAsync/B
+Accept: application/json
+

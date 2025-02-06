@@ -1,17 +1,9 @@
-using System;
 using Azure.Data.Tables;
 
 namespace Api;
 
-public class AzStrorageTablesService
+public class AzStrorageTablesService(TableServiceClient client)
 {
-	private TableServiceClient client;
-
-	public AzStrorageTablesService(TableServiceClient client)
-	{
-		this.client = client;
-	}
-
 	private TableClient GetEmployeeTable()
 	{
 		client.CreateTableIfNotExists("Employee");
@@ -19,18 +11,69 @@ public class AzStrorageTablesService
 		return table;
 	}
 
-	public async Task<List<EmployeeEntity>> GetAllEmployee()
+	public List<EmployeeEntity> GetAllEmployee()
 	{
 		TableClient tblEmployees = GetEmployeeTable();
 		var lstEmployees = new List<EmployeeEntity>();
 	
-		var queryResult = tblEmployees.Query<EmployeeEntity>(e => e.RowKey != "KEY");
+		var queryResult = tblEmployees.Query<EmployeeEntity>();
 
 		foreach (var emp in queryResult)
 		{
 			lstEmployees.Add(emp);
 		} 
 
+		return lstEmployees;
+	}
+
+
+	public async Task<List<EmployeeEntity>> GetAllEmployeeAsync()
+	{
+		TableClient tblEmployees = GetEmployeeTable();
+		var lstEmployees = new List<EmployeeEntity>();
+	
+		var queryResult = tblEmployees.QueryAsync<EmployeeEntity>(); // maxPerPage: 1000 is the default value
+
+		await foreach (var emp in queryResult.AsPages())
+		{
+			foreach (var item in emp.Values)
+			{
+				lstEmployees.Add(item);
+			}
+		}
+
+		return lstEmployees;
+	}
+
+	public List<EmployeeEntity> GetEmployeeStartingBy(string firstLetter)
+	{
+		TableClient tblEmployees = GetEmployeeTable();
+		var lstEmployees = new List<EmployeeEntity>();
+	
+		var queryResult = tblEmployees.Query<EmployeeEntity>(e => e.PartitionKey == firstLetter);
+
+		foreach (var emp in queryResult)
+		{
+			lstEmployees.Add(emp);
+		} 
+		return lstEmployees;
+	}
+
+
+	public async Task<List<EmployeeEntity>> GetEmployeeStartingByAsync(string firstLetter)
+	{
+		TableClient tblEmployees = GetEmployeeTable();
+		var lstEmployees = new List<EmployeeEntity>();
+	
+		var queryResult = tblEmployees.QueryAsync<EmployeeEntity>(e => e.PartitionKey == firstLetter);
+
+		await foreach (var emp in queryResult.AsPages())
+		{
+			foreach (var item in emp.Values)
+			{
+				lstEmployees.Add(item);
+			}
+		}
 		return lstEmployees;
 	}
 

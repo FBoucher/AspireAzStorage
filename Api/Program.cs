@@ -23,32 +23,42 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
-app.MapGet("/employees", async (TableServiceClient client) =>
+app.MapGet("/employees", (TableServiceClient client) =>
 {
     var service = new AzStrorageTablesService(client);
-    var employees = await service.GetAllEmployee();
+    var employees = service.GetAllEmployee();
     return Results.Ok(employees);
 })
 .WithName("GetAllEmployees");
+
+
+app.MapGet("/employeesaync", async (TableServiceClient client) =>
+{
+    var service = new AzStrorageTablesService(client);
+    var employees = await service.GetAllEmployeeAsync();
+    return Results.Ok(employees);
+})
+.WithName("GetAllEmployeesAsync");
+
+
+
+app.MapGet("/employees/{firstLetter}", (TableServiceClient client, string firstLetter) =>
+{
+    var service = new AzStrorageTablesService(client);
+    var employees = service.GetEmployeeStartingBy(firstLetter);
+    return Results.Ok(employees);
+})
+.WithName("GetEmployeesByFirstLetter");
+
+
+app.MapGet("/employeesAsync/{firstLetter}", async (TableServiceClient client, string firstLetter) =>
+{
+    var service = new AzStrorageTablesService(client);
+    var employees = await service.GetEmployeeStartingByAsync(firstLetter);
+    return Results.Ok(employees);
+})
+.WithName("GetEmployeesByFirstLetterAsync");
 
 
 app.MapGet("/generate", async (TableServiceClient client) =>
@@ -66,24 +76,10 @@ app.MapGet("/generate", async (TableServiceClient client) =>
     
     var service = new AzStrorageTablesService(client);
     var result = await service.SaveEmployees(employees);
-    return Results.Ok(employees);
+
+    return Results.Ok($"{employees.Count} employees generated");
 })
 .WithName("generate");
 
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-
-
-
-
-
-    //     .RuleFor(e => e.PartitionKey, f => "Employee")
-    // .RuleFor(e => e.RowKey, f => f.Random.Guid().ToString())
-    // .RuleFor(e => e.FirstName, f => f.Person.FirstName)
-    // .RuleFor(e => e.LastName, f => f.Person.LastName)
-    // .RuleFor(e => e.Email, f => f.Internet.Email)
