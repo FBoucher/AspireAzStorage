@@ -30,7 +30,8 @@ app.MapGet("/employees", (TableServiceClient client) =>
     var employees = service.GetAllEmployee();
     return Results.Ok(employees);
 })
-.WithName("GetAllEmployees");
+.WithName("GetAllEmployees")
+.WithDescription("Get all employees from the table storage");
 
 
 app.MapGet("/employeesaync", async (TableServiceClient client) =>
@@ -39,7 +40,9 @@ app.MapGet("/employeesaync", async (TableServiceClient client) =>
     var employees = await service.GetAllEmployeeAsync();
     return Results.Ok(employees);
 })
-.WithName("GetAllEmployeesAsync");
+.WithName("GetAllEmployeesAsync")
+.WithDescription("Get all employees from the table storage, using an Async method")
+.WithTags("Async", "Employees");
 
 
 
@@ -49,7 +52,9 @@ app.MapGet("/employees/{firstLetter}", (TableServiceClient client, string firstL
     var employees = service.GetEmployeeStartingBy(firstLetter);
     return Results.Ok(employees);
 })
-.WithName("GetEmployeesByFirstLetter");
+.WithName("GetEmployeesByFirstLetter")
+.WithDescription("Get all employees that the lastname starts with the given letter.")
+;
 
 
 app.MapGet("/employeesAsync/{firstLetter}", async (TableServiceClient client, string firstLetter) =>
@@ -58,7 +63,9 @@ app.MapGet("/employeesAsync/{firstLetter}", async (TableServiceClient client, st
     var employees = await service.GetEmployeeStartingByAsync(firstLetter);
     return Results.Ok(employees);
 })
-.WithName("GetEmployeesByFirstLetterAsync");
+.WithName("GetEmployeesByFirstLetterAsync")
+.WithDescription("Get all employees that the lastname starts with the given letter. Using an Async method")
+.WithTags("Async", "Employees");
 
 
 app.MapGet("/generate", async (TableServiceClient client) =>
@@ -79,7 +86,9 @@ app.MapGet("/generate", async (TableServiceClient client) =>
 
     return Results.Ok($"{employees.Count} employees generated");
 })
-.WithName("generate");
+.WithName("generate")
+.WithDescription("Generate 5000 employees and save them to the table storage")
+.WithTags("Generate", "Employees");
 
 
 app.Run();

@@ -483,3 +483,7 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 .azure
+
+
+# Azuite files
+__*__.json
