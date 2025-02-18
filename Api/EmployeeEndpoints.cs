@@ -2,7 +2,6 @@ using Api.Domain;
 using Api.Services;
 using Azure.Data.Tables;
 using Bogus;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Api;
 

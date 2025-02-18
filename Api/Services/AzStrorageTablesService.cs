@@ -3,21 +3,20 @@ using Azure.Data.Tables;
 
 namespace Api.Services;
 
-public class AzStrorageTablesService(TableServiceClient client)
+public class AzStrorageTablesService
 {
-	private TableClient GetEmployeeTable()
-	{
-		client.CreateTableIfNotExists("Employee");
-		TableClient table = client.GetTableClient("Employee");
-		return table;
-	}
+	private readonly TableClient _employeeTableClient;
+
+    public AzStrorageTablesService(TableServiceClient client)
+    {
+        client.CreateTableIfNotExists("Employee");
+        _employeeTableClient = client.GetTableClient("Employee");
+    }
 
 	public List<EmployeeEntity> GetAllEmployee()
 	{
-		TableClient tblEmployees = GetEmployeeTable();
 		var lstEmployees = new List<EmployeeEntity>();
-	
-		var queryResult = tblEmployees.Query<EmployeeEntity>();
+		var queryResult = _employeeTableClient.Query<EmployeeEntity>();
 
 		foreach (var emp in queryResult)
 		{
@@ -30,10 +29,9 @@ public class AzStrorageTablesService(TableServiceClient client)
 
 public async Task<Dictionary<string, int>> GetEmployeeByCountryAsync()
 {
-	TableClient tblEmployees = GetEmployeeTable();
 	var countryCount = new Dictionary<string, int>();
 	
-	var queryResult = tblEmployees.QueryAsync<EmployeeEntity>();
+	var queryResult = _employeeTableClient.QueryAsync<EmployeeEntity>();
 
 	await foreach (var emp in queryResult.AsPages())
 	{
@@ -56,10 +54,9 @@ public async Task<Dictionary<string, int>> GetEmployeeByCountryAsync()
 
 	public List<EmployeeEntity> GetEmployeeStartingBy(string firstLetter)
 	{
-		TableClient tblEmployees = GetEmployeeTable();
 		var lstEmployees = new List<EmployeeEntity>();
 	
-		var queryResult = tblEmployees.Query<EmployeeEntity>(e => e.PartitionKey == firstLetter);
+		var queryResult = _employeeTableClient.Query<EmployeeEntity>(e => e.PartitionKey == firstLetter);
 
 		foreach (var emp in queryResult)
 		{
@@ -71,10 +68,9 @@ public async Task<Dictionary<string, int>> GetEmployeeByCountryAsync()
 
 	public async Task<Dictionary<char, List<EmployeeEntity>>> GetEmployeesGroupByFirstLetterFirstNameAsync()
 	{
-		TableClient tblEmployees = GetEmployeeTable();
 		var lstEmployees = new List<EmployeeEntity>();
 
-		var queryResult = tblEmployees.QueryAsync<EmployeeEntity>();
+		var queryResult = _employeeTableClient.QueryAsync<EmployeeEntity>();
 
 		await foreach (var emp in queryResult.AsPages())
 		{
@@ -95,10 +91,9 @@ public async Task<Dictionary<string, int>> GetEmployeeByCountryAsync()
 
 	public async Task<bool> SaveEmployees(List<EmployeeEntity> employees)
 	{
-		TableClient tblEmployees = GetEmployeeTable();
 		foreach (var emp in employees)
 		{
-			await tblEmployees.AddEntityAsync(emp);
+			await _employeeTableClient.AddEntityAsync(emp);
 		}
 		return true;
 	}
