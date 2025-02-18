@@ -1,28 +1,32 @@
-@Api_HostAddress = http://localhost:5258
+@Api_HostAddress = https://localhost:7125
 
 
-### Generates many employees
-GET {{Api_HostAddress}}/generate
+### Generates 10 employees
+GET {{Api_HostAddress}}/api/generate/10
 Accept: application/json
 
+
+### Generates 500 (default) employees
+GET {{Api_HostAddress}}/api/generate
+Accept: application/json
 
 
 ### Get all employees
-GET {{Api_HostAddress}}/employees
+GET {{Api_HostAddress}}/api/GetEmployeesAsync
 Accept: application/json
 
 
-###	Get all employees with async
-GET {{Api_HostAddress}}/employeesaync
+###	Get all country with Employee count
+GET {{Api_HostAddress}}/api/GetEmployeeByCountryAsync
 Accept: application/json
 
 
 ### Get all employees with the last name starting with B
-GET {{Api_HostAddress}}/employees/B
+GET {{Api_HostAddress}}/api/employees/B
 Accept: application/json
 
 
-### Get all employees async with the last name starting with B
-GET {{Api_HostAddress}}/employeesAsync/B
+### Get all employees group by the first letter of the firstname
+GET {{Api_HostAddress}}/api/employeesGroupByFirstLetterFirstNameAsync
 Accept: application/json
 
