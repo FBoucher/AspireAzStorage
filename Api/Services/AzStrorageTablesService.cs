@@ -13,27 +13,26 @@ public class AzStrorageTablesService
         _employeeTableClient = client.GetTableClient("Employee");
     }
 
-	public List<EmployeeEntity> GetAllEmployee()
-	{
-		var lstEmployees = new List<EmployeeEntity>();
-		var queryResult = _employeeTableClient.Query<EmployeeEntity>();
+	public async Task<List<EmployeeEntity>> GetAllEmployeeAsync()
+    {
+        var lstEmployees = new List<EmployeeEntity>();
+        var queryResult = _employeeTableClient.QueryAsync<EmployeeEntity>();
 
-		foreach (var emp in queryResult)
-		{
-			lstEmployees.Add(emp);
-		} 
+        await foreach (var emp in queryResult.AsPages().ConfigureAwait(false))
+        {
+            lstEmployees.AddRange(emp.Values);
+        }
 
-		return lstEmployees;
-	}
+        return lstEmployees;
+    }
 
 
 public async Task<Dictionary<string, int>> GetEmployeeByCountryAsync()
 {
 	var countryCount = new Dictionary<string, int>();
-	
 	var queryResult = _employeeTableClient.QueryAsync<EmployeeEntity>();
 
-	await foreach (var emp in queryResult.AsPages())
+	await foreach (var emp in queryResult.AsPages().ConfigureAwait(false))
 	{
 		foreach (var item in emp.Values)
 		{
@@ -54,30 +53,19 @@ public async Task<Dictionary<string, int>> GetEmployeeByCountryAsync()
 
 	public List<EmployeeEntity> GetEmployeeStartingBy(string firstLetter)
 	{
-		var lstEmployees = new List<EmployeeEntity>();
-	
 		var queryResult = _employeeTableClient.Query<EmployeeEntity>(e => e.PartitionKey == firstLetter);
-
-		foreach (var emp in queryResult)
-		{
-			lstEmployees.Add(emp);
-		} 
-		return lstEmployees;
+		return queryResult.ToList();
 	}
 
 
 	public async Task<Dictionary<char, List<EmployeeEntity>>> GetEmployeesGroupByFirstLetterFirstNameAsync()
 	{
 		var lstEmployees = new List<EmployeeEntity>();
-
 		var queryResult = _employeeTableClient.QueryAsync<EmployeeEntity>();
 
-		await foreach (var emp in queryResult.AsPages())
+		await foreach (var emp in queryResult.AsPages().ConfigureAwait(false))
 		{
-			foreach (var item in emp.Values)
-			{
-				lstEmployees.Add(item);
-			}
+			lstEmployees.AddRange(emp.Values);
 		}
 
 		var groupedEmployees = lstEmployees
@@ -89,11 +77,11 @@ public async Task<Dictionary<string, int>> GetEmployeeByCountryAsync()
 
 
 
-	public async Task<bool> SaveEmployees(List<EmployeeEntity> employees)
+	public async Task<bool> SaveEmployeesAsync(List<EmployeeEntity> employees)
 	{
 		foreach (var emp in employees)
 		{
-			await _employeeTableClient.AddEntityAsync(emp);
+			await _employeeTableClient.AddEntityAsync(emp).ConfigureAwait(false);
 		}
 		return true;
 	}
