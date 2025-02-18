@@ -28,23 +28,31 @@ public class AzStrorageTablesService(TableServiceClient client)
 	}
 
 
-	public async Task<List<EmployeeEntity>> GetAllEmployeeAsync()
-	{
-		TableClient tblEmployees = GetEmployeeTable();
-		var lstEmployees = new List<EmployeeEntity>();
+public async Task<Dictionary<string, int>> GetEmployeeByCountryAsync()
+{
+	TableClient tblEmployees = GetEmployeeTable();
+	var countryCount = new Dictionary<string, int>();
 	
-		var queryResult = tblEmployees.QueryAsync<EmployeeEntity>(); // maxPerPage: 1000 is the default value
+	var queryResult = tblEmployees.QueryAsync<EmployeeEntity>();
 
-		await foreach (var emp in queryResult.AsPages())
+	await foreach (var emp in queryResult.AsPages())
+	{
+		foreach (var item in emp.Values)
 		{
-			foreach (var item in emp.Values)
+			string country = item.Address?.Split(',').LastOrDefault()?.Trim() ?? "Unknown";
+			if (countryCount.ContainsKey(country))
 			{
-				lstEmployees.Add(item);
+				countryCount[country]++;
+			}
+			else
+			{
+				countryCount[country] = 1;
 			}
 		}
-
-		return lstEmployees;
 	}
+
+	return countryCount;
+}
 
 	public List<EmployeeEntity> GetEmployeeStartingBy(string firstLetter)
 	{
@@ -61,12 +69,12 @@ public class AzStrorageTablesService(TableServiceClient client)
 	}
 
 
-	public async Task<List<EmployeeEntity>> GetEmployeeStartingByAsync(string firstLetter)
+	public async Task<Dictionary<char, List<EmployeeEntity>>> GetEmployeesGroupByFirstLetterFirstNameAsync()
 	{
 		TableClient tblEmployees = GetEmployeeTable();
 		var lstEmployees = new List<EmployeeEntity>();
-	
-		var queryResult = tblEmployees.QueryAsync<EmployeeEntity>(e => e.PartitionKey == firstLetter);
+
+		var queryResult = tblEmployees.QueryAsync<EmployeeEntity>();
 
 		await foreach (var emp in queryResult.AsPages())
 		{
@@ -75,8 +83,15 @@ public class AzStrorageTablesService(TableServiceClient client)
 				lstEmployees.Add(item);
 			}
 		}
-		return lstEmployees;
+
+		var groupedEmployees = lstEmployees
+			.GroupBy(e => e.FirstName![0])
+			.ToDictionary(g => g.Key, g => g.ToList());
+
+		return groupedEmployees;
 	}
+
+
 
 	public async Task<bool> SaveEmployees(List<EmployeeEntity> employees)
 	{

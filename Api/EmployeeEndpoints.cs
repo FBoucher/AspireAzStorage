@@ -16,7 +16,7 @@ public static class EmployeeEndpoints
         MapGetAllEmployees(endpoints);
         MapGetAllEmployeesAsync(endpoints);
         MapGetEmployeesByFirstLetter(endpoints);
-        MapGetEmployeesByFirstLetterAsync(endpoints);
+        MapGetEmployeesGroupByFirstLetterFirstNameAsync(endpoints);
         MapGenerateEmployees(endpoints);
     }
 
@@ -29,10 +29,10 @@ public static class EmployeeEndpoints
 
     private static void MapGetAllEmployeesAsync(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet("/employeesAsync", (TableServiceClient client) => GetAllEmployeesAsync(new AzStrorageTablesService(client)))
+        endpoints.MapGet("/GetEmployeeByCountryAsync", (TableServiceClient client) => GetEmployeeByCountryAsync(new AzStrorageTablesService(client)))
             .WithName("GetAllEmployeesAsync")
-            .WithDescription("Get all employees from the table storage, using an Async method")
-            .WithTags("Async", "Employees");
+            .WithDescription("Get all the country with their employees counts, using an Async method")
+            .WithTags("Async", "Country");
     }
 
     private static void MapGetEmployeesByFirstLetter(IEndpointRouteBuilder endpoints)
@@ -42,32 +42,32 @@ public static class EmployeeEndpoints
             .WithDescription("Get all employees that the lastname starts with the given letter.");
     }
 
-    private static void MapGetEmployeesByFirstLetterAsync(IEndpointRouteBuilder endpoints)
+    private static void MapGetEmployeesGroupByFirstLetterFirstNameAsync(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet("/employeesAsync/{firstLetter}", (TableServiceClient client, string firstLetter) => GetEmployeesByFirstLetterAsync(new AzStrorageTablesService(client), firstLetter))
-            .WithName("GetEmployeesByFirstLetterAsync")
-            .WithDescription("Get all employees that the lastname starts with the given letter. Using an Async method")
+        endpoints.MapGet("/employeesGroupByFirstLetterFirstNameAsync", (TableServiceClient client) => GetEmployeesGroupByFirstLetterFirstNameAsync(new AzStrorageTablesService(client)))
+            .WithName("GetEmployeesGroupByFirstLetterFirstNameAsync")
+            .WithDescription("Get all employees grouped by the first letter of their first name, using an Async method")
             .WithTags("Async", "Employees");
     }
 
     private static void MapGenerateEmployees(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet("/generate", (TableServiceClient client) => GenerateEmployees(new AzStrorageTablesService(client)))
+        endpoints.MapGet("/generate/{quantity?}", (TableServiceClient client, int? quantity) => GenerateEmployees(new AzStrorageTablesService(client), quantity))
             .WithName("GenerateEmployees")
             .WithDescription("Generate 5000 employees and save them to the table storage")
             .WithTags("Generate", "Employees");
     }
 
     private static IResult GetAllEmployees(AzStrorageTablesService service)
-    {               
+    {
         var employees = service.GetAllEmployee();
         return Results.Ok(employees);
     }
 
-    private static async Task<IResult> GetAllEmployeesAsync(AzStrorageTablesService service)
+    private static async Task<IResult> GetEmployeeByCountryAsync(AzStrorageTablesService service)
     {
-        var employees = await service.GetAllEmployeeAsync();
-        return Results.Ok(employees);
+        var countryEmployeeCount = await service.GetEmployeeByCountryAsync();
+        return Results.Ok(countryEmployeeCount);
     }
 
     private static IResult GetEmployeesByFirstLetter(AzStrorageTablesService service, string firstLetter)
@@ -76,25 +76,26 @@ public static class EmployeeEndpoints
         return Results.Ok(employees);
     }
 
-    private static async Task<IResult> GetEmployeesByFirstLetterAsync(AzStrorageTablesService service, string firstLetter)
+    private static async Task<IResult> GetEmployeesGroupByFirstLetterFirstNameAsync(AzStrorageTablesService service)
     {
-        var employees = await service.GetEmployeeStartingByAsync(firstLetter);
+        var employees = await service.GetEmployeesGroupByFirstLetterFirstNameAsync();
         return Results.Ok(employees);
     }
 
-    private static async Task<IResult> GenerateEmployees(AzStrorageTablesService service)
+    private static async Task<IResult> GenerateEmployees(AzStrorageTablesService service, int? quantity)
     {
         var EmployeeFaker = new Faker<EmployeeEntity>()
             .RuleFor(e => e.RowKey, f => f.Random.Guid().ToString())
             .RuleFor(e => e.FirstName, f => f.Person.FirstName)
             .RuleFor(e => e.LastName, f => f.Person.LastName)
-            .RuleFor(e => e.PartitionKey, (f,e) => e.LastName?.Substring(0,1).ToUpper() ?? String.Empty)
-            .RuleFor(e => e.Email, (f,e) => f.Internet.Email(e.FirstName, e.LastName))
+            .RuleFor(e => e.PartitionKey, (f, e) => e.LastName?.Substring(0, 1).ToUpper() ?? String.Empty)
+            .RuleFor(e => e.Email, (f, e) => f.Internet.Email(e.FirstName, e.LastName))
             .RuleFor(e => e.PhoneNumber, f => f.Phone.PhoneNumber())
             .RuleFor(e => e.Address, f => f.Address.FullAddress());
 
-        var employees = EmployeeFaker.Generate(5000);
-        
+        int qty = quantity ?? 500;
+        var employees = EmployeeFaker.Generate(qty);
+
         var result = await service.SaveEmployees(employees);
 
         return Results.Ok($"{employees.Count} employees generated");
