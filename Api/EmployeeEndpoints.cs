@@ -8,36 +8,58 @@ namespace Api;
 
 public static class EmployeeEndpoints
 {
-    public static void MapEmployeeEndpoints(this IEndpointRouteBuilder app){
+    public static void MapEmployeeEndpoints(this IEndpointRouteBuilder app)
+    {
         var endpoints = app.MapGroup("api")
                             .WithOpenApi();
 
+        MapGetAllEmployees(endpoints);
+        MapGetAllEmployeesAsync(endpoints);
+        MapGetEmployeesByFirstLetter(endpoints);
+        MapGetEmployeesByFirstLetterAsync(endpoints);
+        MapGenerateEmployees(endpoints);
+    }
+
+    private static void MapGetAllEmployees(IEndpointRouteBuilder endpoints)
+    {
         endpoints.MapGet("/employees", (TableServiceClient client) => GetAllEmployees(new AzStrorageTablesService(client)))
             .WithName("GetAllEmployees")
             .WithDescription("Get all employees from the table storage");
+    }
 
-        endpoints.MapGet("/employeesaync", (TableServiceClient client) => GetAllEmployeesAsync(new AzStrorageTablesService(client)))
+    private static void MapGetAllEmployeesAsync(IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapGet("/employeesAsync", (TableServiceClient client) => GetAllEmployeesAsync(new AzStrorageTablesService(client)))
             .WithName("GetAllEmployeesAsync")
             .WithDescription("Get all employees from the table storage, using an Async method")
             .WithTags("Async", "Employees");
+    }
 
+    private static void MapGetEmployeesByFirstLetter(IEndpointRouteBuilder endpoints)
+    {
         endpoints.MapGet("/employees/{firstLetter}", (TableServiceClient client, string firstLetter) => GetEmployeesByFirstLetter(new AzStrorageTablesService(client), firstLetter))
             .WithName("GetEmployeesByFirstLetter")
             .WithDescription("Get all employees that the lastname starts with the given letter.");
+    }
 
+    private static void MapGetEmployeesByFirstLetterAsync(IEndpointRouteBuilder endpoints)
+    {
         endpoints.MapGet("/employeesAsync/{firstLetter}", (TableServiceClient client, string firstLetter) => GetEmployeesByFirstLetterAsync(new AzStrorageTablesService(client), firstLetter))
             .WithName("GetEmployeesByFirstLetterAsync")
             .WithDescription("Get all employees that the lastname starts with the given letter. Using an Async method")
             .WithTags("Async", "Employees");
+    }
 
+    private static void MapGenerateEmployees(IEndpointRouteBuilder endpoints)
+    {
         endpoints.MapGet("/generate", (TableServiceClient client) => GenerateEmployees(new AzStrorageTablesService(client)))
-            .WithName("generate")
+            .WithName("GenerateEmployees")
             .WithDescription("Generate 5000 employees and save them to the table storage")
             .WithTags("Generate", "Employees");
     }
 
     private static IResult GetAllEmployees(AzStrorageTablesService service)
-    {			   
+    {               
         var employees = service.GetAllEmployee();
         return Results.Ok(employees);
     }
