@@ -1,6 +1,7 @@
+using Api.Domain;
 using Azure.Data.Tables;
 
-namespace Api;
+namespace Api.Services;
 
 public class AzStrorageTablesService(TableServiceClient client)
 {
