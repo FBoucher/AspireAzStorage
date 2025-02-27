@@ -2,7 +2,7 @@ using System;
 using Azure;
 using Azure.Data.Tables;
 
-namespace Api.Domain;
+namespace Api.Models;
 
 public class EmployeeEntity: ITableEntity
 {

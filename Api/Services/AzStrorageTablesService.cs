@@ -1,4 +1,4 @@
-using Api.Domain;
+using Api.Models;
 using Azure.Data.Tables;
 
 namespace Api.Services;

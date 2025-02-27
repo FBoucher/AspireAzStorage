@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
-using Api.Domain;
+using Api.Models;
 using Api.Services;
 using Azure.Data.Tables;
 using Bogus;
 
-namespace Api;
+namespace Api.Endpoints;
 
 public static class EmployeeEndpoints
 {

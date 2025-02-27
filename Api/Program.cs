@@ -1,5 +1,5 @@
 
-using Api;
+using Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
