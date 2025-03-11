@@ -1,4 +1,3 @@
-
 using Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,8 +21,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
+// Add the Employee Endpoints
 app.MapEmployeeEndpoints();
-
 
 app.Run();
