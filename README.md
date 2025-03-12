@@ -75,9 +75,9 @@ Use the included [Api.http](./Api/Api.http) file to test the API endpoints, or s
 
 ### 4. Get the application URL
 
-```
-azd show-endpoints
-```
+After the deployment is complete, you will see the URL of your application (A) in the terminal; the one starting by `https://api.`. There is also many details about the resources created in Azure, and a link to the .NET Aspire dashboard (B).
+
+![azd up result](./gh/images/azd-up-result.png)
 
 ## Community & Support
 Have questions or found an issue? We'd love to hear from you!
