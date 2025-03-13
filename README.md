@@ -26,7 +26,13 @@ The application manages employee data through various endpoints that allow you t
 
 ## Running Locally
 
-### 1. Clone the repository
+### 1. Get the repository
+
+```bash
+azd init -t FBoucher/AspireAzStorage
+```
+
+**or** if you prefer, you can clone it with the folling command:
 
 ```bash
 git clone https://github.com/yourusername/AspireAzStorage.git
@@ -61,11 +67,7 @@ Use the included [Api.http](./Api/Api.http) file to test the API endpoints, or s
 
 ## Deploying to Azure
 
-1. Initialize the Azure Developer CLI environment. If you haven't already, log in to your Azure account with `azd auth login` then initialize the project with the following command: 
-
-	```bash
-	azd init
-	```
+1. If you haven't already, log in to your Azure account with `azd auth login`.
 
 1. Provision all required Azure resources and deploy the application with the following command:
 
@@ -73,7 +75,7 @@ Use the included [Api.http](./Api/Api.http) file to test the API endpoints, or s
 	azd up
 	```
 
-### 4. Get the application URL
+1. Get the application URL
 
 After the deployment is complete, you will see the URL of your application (A) in the terminal; the one starting by `https://api.`. There is also many details about the resources created in Azure, and a link to the .NET Aspire dashboard (B).
 
