@@ -1,3 +1,6 @@
+[![.NET 9](https://img.shields.io/badge/.NET%209.0-512BD4?logo=dotnet&logoColor=fff)](https://dotnet.microsoft.com/download/dotnet/9.0) ![GitHub License](https://img.shields.io/github/license/fboucher/AspireAzStorage)
+
+
 # Aspire Azure Storage Demo
 
 This project demonstrates how to use Azure Table Storage with a Minimal API and .NET Aspire - a cloud-ready stack for building observable, production-ready, distributed applications.
